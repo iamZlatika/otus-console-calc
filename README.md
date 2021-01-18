@@ -1,1 +1,3 @@
-# otus-console-calc
+# Otus Console Calculator
+
+TBD
