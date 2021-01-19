@@ -31,4 +31,19 @@ describe("Expression Parser", () => {
       );
     });
   });
+  describe("Should parse subtraction expressions", () => {
+    it("Should parse subtraction", () => {
+      expect(parse("1 - 2")).toBe(-1);
+    });
+    it("Should parse multi args subtraction", () => {
+      expect(parse("59 - 82 - 92 - 2 - 5 - -84")).toBe(
+        59 - 82 - 92 - 2 - 5 - -84
+      );
+    });
+  });
+  describe("Should parse mixed expressions", () => {
+    it("Should parse + and - expressions", () => {
+      expect(parse("4 + 32 - 6 + 33 - 72")).toBe(4 + 32 - 6 + 33 - 72);
+    });
+  });
 });

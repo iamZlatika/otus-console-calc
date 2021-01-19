@@ -19,6 +19,9 @@ export class ExpressionLexer implements Lexer {
     if (word === "+") {
       return new Token("operation", word);
     }
+    if (word === "-") {
+      return new Token("operation", word);
+    }
     return new Token("value", word);
   }
 }

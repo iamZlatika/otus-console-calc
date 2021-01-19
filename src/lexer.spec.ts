@@ -49,4 +49,11 @@ describe("Expression Lexer", () => {
       text: "+",
     });
   });
+  it("Should process operation -", () => {
+    const lexer = new ExpressionLexer("-");
+    expect(lexer.extractToken()).toMatchObject({
+      type: "operation",
+      text: "-",
+    });
+  });
 });

@@ -1,4 +1,8 @@
-import { ValueExpression, SumExpression } from "./expression";
+import {
+  ValueExpression,
+  SumExpression,
+  SubtractionExpression,
+} from "./expression";
 
 describe("Value Expression", () => {
   it("Should return value", () => {
@@ -28,5 +32,14 @@ describe("Sum Expression", () => {
     );
     const expression = new SumExpression(left, right);
     expect(expression.evaluate()).toBe(33 + 54 + 58 + 91);
+  });
+});
+describe("Subtraction expression", () => {
+  it("Should evaluate two values", () => {
+    const expression = new SubtractionExpression(
+      new ValueExpression("33"),
+      new ValueExpression("54")
+    );
+    expect(expression.evaluate()).toBe(33 - 54);
   });
 });
