@@ -15,9 +15,24 @@ export class SumExpression implements Expression {
     return this.left.evaluate() + this.right.evaluate();
   }
 }
+
 export class SubtractionExpression implements Expression {
   constructor(readonly left: Expression, readonly right: Expression) {}
   evaluate(): number {
     return this.left.evaluate() - this.right.evaluate();
+  }
+}
+
+export class MultiplicationExpression implements Expression {
+  constructor(readonly left: Expression, readonly right: Expression) {}
+  evaluate(): number {
+    return this.left.evaluate() * this.right.evaluate();
+  }
+}
+
+export class DivisionExpression implements Expression {
+  constructor(readonly left: Expression, readonly right: Expression) {}
+  evaluate(): number {
+    return this.left.evaluate() / this.right.evaluate();
   }
 }

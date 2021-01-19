@@ -1,8 +1,4 @@
-import {
-  ValueExpression,
-  SumExpression,
-  SubtractionExpression,
-} from "./expression";
+import { ValueExpression, SumExpression, SubtractionExpression, MultiplicationExpression, DivisionExpression } from "./expression";
 
 describe("Value Expression", () => {
   it("Should return value", () => {
@@ -15,31 +11,34 @@ describe("Value Expression", () => {
 
 describe("Sum Expression", () => {
   it("Should evaluate two values sum", () => {
-    const expression = new SumExpression(
-      new ValueExpression("33"),
-      new ValueExpression("54")
-    );
+    const expression = new SumExpression(new ValueExpression("33"), new ValueExpression("54"));
     expect(expression.evaluate()).toBe(33 + 54);
   });
   it("Should evaluate nested expressions", () => {
-    const left = new SumExpression(
-      new ValueExpression("33"),
-      new ValueExpression("54")
-    );
-    const right = new SumExpression(
-      new ValueExpression("58"),
-      new ValueExpression("91")
-    );
+    const left = new SumExpression(new ValueExpression("33"), new ValueExpression("54"));
+    const right = new SumExpression(new ValueExpression("58"), new ValueExpression("91"));
     const expression = new SumExpression(left, right);
     expect(expression.evaluate()).toBe(33 + 54 + 58 + 91);
   });
 });
+
 describe("Subtraction expression", () => {
   it("Should evaluate two values", () => {
-    const expression = new SubtractionExpression(
-      new ValueExpression("33"),
-      new ValueExpression("54")
-    );
+    const expression = new SubtractionExpression(new ValueExpression("33"), new ValueExpression("54"));
     expect(expression.evaluate()).toBe(33 - 54);
+  });
+});
+
+describe("Multiplication expression", () => {
+  it("Should evaluate two values", () => {
+    const expression = new MultiplicationExpression(new ValueExpression("23"), new ValueExpression("11"));
+    expect(expression.evaluate()).toBe(23 * 11);
+  });
+});
+
+describe("Division expression", () => {
+  it("Should evaluate two values", () => {
+    const expression = new DivisionExpression(new ValueExpression("10"), new ValueExpression("5"));
+    expect(expression.evaluate()).toBe(10 / 5);
   });
 });
