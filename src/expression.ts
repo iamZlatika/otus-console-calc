@@ -5,7 +5,10 @@ export interface Expression {
 export class ValueExpression implements Expression {
   constructor(readonly value: string) {}
   evaluate(): number {
-    return Number(this.value);
+    const result = Number(this.value);
+    if (isNaN(result))
+      throw new Error(`Invalid number: ${this.value}`)
+    return result;
   }
 }
 
@@ -34,5 +37,12 @@ export class DivExpression implements Expression {
   constructor(readonly left: Expression, readonly right: Expression) {}
   evaluate(): number {
     return this.left.evaluate() / this.right.evaluate();
+  }
+}
+
+export class PowExpression implements Expression {
+  constructor(readonly left: Expression, readonly right: Expression) {}
+  evaluate(): number {
+    return Math.pow(this.left.evaluate(), this.right.evaluate());
   }
 }

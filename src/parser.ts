@@ -1,11 +1,12 @@
-import { parse } from "path";
-import { Expression, ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression } from "./expression";
+import { Expression, ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression } from "./expression";
 import { Lexer } from "./lexer";
 import { Token } from "./token";
 
 export interface Parser {
   parse(): Expression;
 }
+
+const priorities = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3}
 
 export class ExpressionParser implements Parser {
   constructor(readonly lexer: Lexer) {}
@@ -37,18 +38,18 @@ export class ExpressionParser implements Parser {
 
   private processOperation(left: Expression, operation: string){
     switch (operation) {
-      case "+": return new SumExpression(left, this.parseRightArg());
-      case "-": return new SubExpression(left, this.parseRightArg());
-      case "*": return new MulExpression(left, this.parseToken());
-      case "/": return new DivExpression(left, this.parseToken());
+      case "+": return new SumExpression(left, this.parseRightArg(priorities[operation]));
+      case "-": return new SubExpression(left, this.parseRightArg(priorities[operation]));
+      case "*": return new MulExpression(left, this.parseRightArg(priorities[operation]));
+      case "/": return new DivExpression(left, this.parseRightArg(priorities[operation]));
+      case "^": return new PowExpression(left, this.parseRightArg(priorities[operation] - 1));
     }
-    console.log(left, operation)
     throw new Error(`Unsupported operation: ${operation}`)
   }
 
-  parseRightArg(): Expression {
+  parseRightArg(priority: number): Expression {
     let result = this.parseToken();
-    while (this.nextOperation() === "*" || this.nextOperation() === "/") {
+    while (priority < priorities[this.nextOperation()]) {
       result = this.processOperation(result, this.lexer.extractToken().text);
     }
     return result;

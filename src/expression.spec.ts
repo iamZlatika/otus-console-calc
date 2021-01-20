@@ -1,4 +1,4 @@
-import { ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression } from "./expression";
+import { ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression } from "./expression";
 
 describe("Value Expression", () => {
   it("Should return value", () => {
@@ -6,6 +6,10 @@ describe("Value Expression", () => {
   });
   it("Should return another value", () => {
     expect(new ValueExpression("56").evaluate()).toBe(56);
+  });
+
+  it("Should throw Error if argument is not a number", () => {
+    expect(() => new ValueExpression("value").evaluate()).toThrowError();
   });
 });
 
@@ -42,3 +46,10 @@ describe("Division expression", () => {
     expect(expression.evaluate()).toBe(10 / 5);
   });
 });
+
+describe("Power expression", () => {
+  it("Should evaluate two values", () => {
+    const expression = new PowExpression(new ValueExpression("2"), new ValueExpression("10"))
+    expect(expression.evaluate()).toBe(1024);
+  })
+})
