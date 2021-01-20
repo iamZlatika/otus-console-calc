@@ -79,6 +79,22 @@ describe("Expression Lexer", () => {
     });
   });
 
+  it("Should process )", () => {
+    const lexer = new ExpressionLexer(")");
+    expect(lexer.extractToken()).toMatchObject({
+      type: "operation",
+      text: ")",
+    });
+  });
+
+  it("Should process (", () => {
+    const lexer = new ExpressionLexer("(");
+    expect(lexer.extractToken()).toMatchObject({
+      type: "operation",
+      text: "(",
+    });
+  });
+
   it("Should read token", () => {
     const lexer = new ExpressionLexer("*");
     expect(lexer.readToken()).toMatchObject({

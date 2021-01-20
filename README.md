@@ -25,3 +25,4 @@ Result: 42
 
 ## Implemented features
 - arithmetic operations: `+`, `-`, `*`, `/`
+- parentheses: `(`, `)`

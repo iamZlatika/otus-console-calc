@@ -65,6 +65,44 @@ describe("Expression Parser", () => {
     });
   });
 
+  describe("Parentheses", () => {
+    it("Should parse value within parentheses", () => {
+      expect(parse("( 1 )")).toBe(1);
+    });
+
+    it("Should parse expression within parentheses", () => {
+      expect(parse("( 1 + 2 )")).toBe(3);
+    });
+
+    it("Should parse expression with constant within parenseses", () => {
+      expect(parse("1 + ( 2 )")).toBe(3);
+    });
+
+    it("Should parse expression with expression within parenseses", () => {
+      expect(parse("1 + ( 2 + 3 )")).toBe(6);
+    });
+
+    it("Should parse expression with parentheses changing evaluation priority", () => {
+      expect(parse("2 * ( 3 + 4 )")).toBe(14);
+    });
+
+    it("Should parse another expression with parentheses changing evaluation priority", () => {
+      expect(parse("( 2 + 1 ) * 3")).toBe(9);
+    });
+
+    it("Should parse multiple expressions with parentheses", () => {
+      expect(parse("( 2 + 1 ) * ( 3 + 4 )")).toBe(( 2 + 1 ) * ( 3 + 4 ));
+    });
+
+    it("Should parse nested expressions with parentheses", () => {
+      expect(parse("( 2 + 1 ) * ( 3 * ( 2 + 2 ) )")).toBe(( 2 + 1 ) * ( 3 * ( 2 + 2 ) ));
+    });
+
+    it("Should parse multi level parentheses nesting", () => {
+      expect(parse("2 * ( 2 * ( 2 * ( 2 * ( 1 + 2 ) ) ) ) ) )")).toBe(2 * ( 2 * ( 2 * ( 2 * ( 1 + 2 ) ) ) ));
+    });
+  });
+
   describe("Mixed expressions", () => {
     it("Should parse + and - expressions", () => {
       expect(parse("4 + 32 - 6 + 33 - 72")).toBe(4 + 32 - 6 + 33 - 72);
@@ -80,6 +118,10 @@ describe("Expression Parser", () => {
     it("Should parse +, -, / and * expressions", () => {
       expect(parse("1 + 2 * 2 * 2 + 1")).toBe(1 + 2 * 2 * 2 + 1);
       expect(parse("1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8")).toBe(1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8);
+    });
+
+    it("Should parse +, -, / and *, and brackets expressions", () => {
+      expect(parse("( 2 + 3 + 4 * ( 1 + 7 - 18 ) / ( ( 1 + 2 ) * 3 + 1 )")).toBe(( 2 + 3 + 4 * ( 1 + 7 - 18 ) / ( ( 1 + 2 ) * 3 + 1 )));
     });
   });
 });

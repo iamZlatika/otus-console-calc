@@ -5,7 +5,7 @@ export interface Lexer {
   readToken(): Token;
 }
 
-const operations = new Set<string>(["+", "-", "*", "/"]);
+const operations = new Set<string>(["+", "-", "*", "/", "(", ")"]);
 
 export class ExpressionLexer implements Lexer {
   private readonly words: string[];
