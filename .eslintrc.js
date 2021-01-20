@@ -17,5 +17,7 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["@typescript-eslint", "jest"],
-  rules: {},
+  rules: {
+    "max-len": ["error", { code: 120 }],
+  },
 };

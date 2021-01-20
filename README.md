@@ -26,3 +26,7 @@ Result: 42
 ## Implemented features
 - arithmetic operations: `+`, `-`, `*`, `/`
 - parentheses: `(`, `)`
+- square: `**`
+- power: `^`
+- factorial `!`
+- trigonometric functions: `sin`, `cos`, `tan`

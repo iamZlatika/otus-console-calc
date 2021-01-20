@@ -6,8 +6,9 @@ export class ValueExpression implements Expression {
   constructor(readonly value: string) {}
   evaluate(): number {
     const result = Number(this.value);
-    if (isNaN(result))
-      throw new Error(`Invalid number: ${this.value}`)
+    if (isNaN(result)) {
+      throw new Error(`Invalid number: ${this.value}`);
+    }
     return result;
   }
 }
@@ -57,13 +58,42 @@ export class SqrExpression implements Expression {
 export class FactExpression implements Expression {
   constructor(readonly left: Expression) {}
   evaluate(): number {
-    var value = this.left.evaluate()
-    if (value < 0)
-      throw new Error(`Unable to evaluate factorial of ${value}`)
+    const value = this.left.evaluate();
+    if (value < 0) {
+      throw new Error(`Unable to evaluate factorial of ${value}`);
+    }
     return this.factorial(value);
   }
 
   private factorial(value: number): number {
-    return value <= 1 ? 1 : value * this.factorial(value - 1)
+    return value <= 1 ? 1 : value * this.factorial(value - 1);
+  }
+}
+
+const toRadians = (degrees: number): number => {
+  return degrees * (Math.PI / 180);
+};
+
+export class SinExpression implements Expression {
+  constructor(readonly right: Expression) {}
+  evaluate(): number {
+    const value = toRadians(this.right.evaluate());
+    return Math.sin(value);
+  }
+}
+
+export class CosExpression implements Expression {
+  constructor(readonly right: Expression) {}
+  evaluate(): number {
+    const value = toRadians(this.right.evaluate());
+    return Math.cos(value);
+  }
+}
+
+export class TanExpression implements Expression {
+  constructor(readonly right: Expression) {}
+  evaluate(): number {
+    const value = toRadians(this.right.evaluate());
+    return Math.tan(value);
   }
 }

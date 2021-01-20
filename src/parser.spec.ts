@@ -1,6 +1,8 @@
 import { ExpressionParser } from "./parser";
 import { ExpressionLexer } from "./lexer";
+
 const evaluate = (expression: string) => new ExpressionParser(new ExpressionLexer(expression)).parse().evaluate();
+
 describe("Expression Parser", () => {
   describe("Value expressions", () => {
     it("Should parse empty expression", () => {
@@ -74,11 +76,11 @@ describe("Expression Parser", () => {
       expect(evaluate("( 1 + 2 )")).toBe(3);
     });
 
-    it("Should parse expression with constant within parenseses", () => {
+    it("Should parse expression with constant within parentheses", () => {
       expect(evaluate("1 + ( 2 )")).toBe(3);
     });
 
-    it("Should parse expression with expression within parenseses", () => {
+    it("Should parse expression with expression within parentheses", () => {
       expect(evaluate("1 + ( 2 + 3 )")).toBe(6);
     });
 
@@ -91,60 +93,96 @@ describe("Expression Parser", () => {
     });
 
     it("Should parse multiple expressions with parentheses", () => {
-      expect(evaluate("( 2 + 1 ) * ( 3 + 4 )")).toBe(( 2 + 1 ) * ( 3 + 4 ));
+      expect(evaluate("( 2 + 1 ) * ( 3 + 4 )")).toBe((2 + 1) * (3 + 4));
     });
 
     it("Should parse nested expressions with parentheses", () => {
-      expect(evaluate("( 2 + 1 ) * ( 3 * ( 2 + 2 ) )")).toBe(( 2 + 1 ) * ( 3 * ( 2 + 2 ) ));
+      expect(evaluate("( 2 + 1 ) * ( 3 * ( 2 + 2 ) )")).toBe((2 + 1) * (3 * (2 + 2)));
     });
 
     it("Should parse multi level parentheses nesting", () => {
-      expect(evaluate("2 * ( 2 * ( 2 * ( 2 * ( 1 + 2 ) ) ) ) ) )")).toBe(2 * ( 2 * ( 2 * ( 2 * ( 1 + 2 ) ) ) ));
+      expect(evaluate("2 * ( 2 * ( 2 * ( 2 * ( 1 + 2 ) ) ) ) ) )")).toBe(2 * (2 * (2 * (2 * (1 + 2)))));
     });
   });
 
   describe("Power", () => {
     it("Should parse power expression", () => {
-      expect(evaluate("2 ^ 10")).toBe(1024)
-    })
+      expect(evaluate("2 ^ 10")).toBe(1024);
+    });
 
-    it ("Should parse multiple arg power expression", () => {
-      expect(evaluate("4 ^ 3 ^ 2")).toBe(Math.pow(4, Math.pow(3, 2)))
-    })
+    it("Should parse multiple arg power expression", () => {
+      expect(evaluate("4 ^ 3 ^ 2")).toBe(Math.pow(4, Math.pow(3, 2)));
+    });
 
-    it ("Should parse power according to its priority", () => {
-      expect(evaluate("1 + 2 ^ 3")).toBe(9)
-      expect(evaluate("2 ^ 3 * 10 )")).toBe(80)
-    })
-  })
+    it("Should parse power according to its priority", () => {
+      expect(evaluate("1 + 2 ^ 3")).toBe(9);
+      expect(evaluate("2 ^ 3 * 10 )")).toBe(80);
+    });
+  });
 
   describe("Square", () => {
     it("Should parse square expression", () => {
-      expect(evaluate("2 **")).toBe(4)
-    })
+      expect(evaluate("2 **")).toBe(4);
+    });
 
     it("Should multiple square expression", () => {
-      expect(evaluate("3 ** **")).toBe(81)
-    })
-  })
+      expect(evaluate("3 ** **")).toBe(81);
+    });
+  });
 
   describe("Factorial", () => {
     it("Should parse factorial expression", () => {
-      expect(evaluate("5 !")).toBe(120)
-    })
+      expect(evaluate("5 !")).toBe(120);
+    });
 
     it("Should parse multiple factorials", () => {
-      expect(evaluate("2 ! ! ! !")).toBe(2)
-      expect(evaluate("3 ! !")).toBe(120 * 6)
-    })
+      expect(evaluate("2 ! ! ! !")).toBe(2);
+      expect(evaluate("3 ! !")).toBe(120 * 6);
+    });
 
     it("Should parse factorial according to its priority", () => {
-      expect(evaluate("1 + 3 !")).toBe(7)
-      expect(evaluate("3 ! * 2")).toBe(12)
-      expect(evaluate("3 ! * 2 !")).toBe(12)
-      expect(evaluate("3 ! ^ 2")).toBe(36)
-    })
-  })
+      expect(evaluate("1 + 3 !")).toBe(7);
+      expect(evaluate("3 ! * 2")).toBe(12);
+      expect(evaluate("3 ! * 2 !")).toBe(12);
+      expect(evaluate("3 ! ^ 2")).toBe(36);
+    });
+  });
+
+  describe("Sine", () => {
+    it("Should parse sin expression", () => {
+      expect(evaluate("sin 0")).toBeCloseTo(0);
+    });
+    it("Should parse sin according to its priority", () => {
+      expect(evaluate("sin 0 + 1")).toBeCloseTo(1);
+      expect(evaluate("sin 90 * 2")).toBeCloseTo(2);
+      expect(evaluate("sin 90 !")).toBeCloseTo(1);
+      expect(evaluate("5 * sin ( 45 + 45 )")).toBeCloseTo(5);
+    });
+  });
+
+  describe("Cosine", () => {
+    it("Should parse cos expression", () => {
+      expect(evaluate("cos 0")).toBeCloseTo(1);
+    });
+    it("Should parse sin according to its priority", () => {
+      expect(evaluate("cos 0 + 1")).toBeCloseTo(2);
+      expect(evaluate("cos 90 * 2")).toBeCloseTo(0);
+      expect(evaluate("cos 90 !")).toBeCloseTo(1);
+      expect(evaluate("5 + cos ( 30 * 2 )")).toBeCloseTo(5.5);
+    });
+  });
+
+  describe("Tangent", () => {
+    it("Should parse tan expression", () => {
+      expect(evaluate("tan 0")).toBeCloseTo(0);
+    });
+    it("Should parse sin according to its priority", () => {
+      expect(evaluate("tan 0 + 1")).toBeCloseTo(1);
+      expect(evaluate("tan 45 * 2")).toBeCloseTo(2);
+      expect(evaluate("tan 45 !")).toBeCloseTo(1);
+      expect(evaluate("5 * tan ( 45 * ( 3 - 2 ) )")).toBeCloseTo(5);
+    });
+  });
 
   describe("Mixed expressions", () => {
     it("Should parse + and - expressions", () => {
@@ -160,11 +198,15 @@ describe("Expression Parser", () => {
 
     it("Should parse +, -, / and * expressions", () => {
       expect(evaluate("1 + 2 * 2 * 2 + 1")).toBe(1 + 2 * 2 * 2 + 1);
-      expect(evaluate("1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8")).toBe(1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8);
+      expect(evaluate("1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8")).toBe(
+        1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8
+      );
     });
 
     it("Should parse +, -, / and *, and parentheses expressions", () => {
-      expect(evaluate("( 2 + 3 + 4 * ( 1 + 7 - 18 ) / ( ( 1 + 2 ) * 3 + 1 )")).toBe(( 2 + 3 + 4 * ( 1 + 7 - 18 ) / ( ( 1 + 2 ) * 3 + 1 )));
+      expect(evaluate("( 2 + 3 + 4 * ( 1 + 7 - 18 ) / ( ( 1 + 2 ) * 3 + 1 )")).toBe(
+        2 + 3 + (4 * (1 + 7 - 18)) / ((1 + 2) * 3 + 1)
+      );
     });
 
     it("Should parse +, -, /, *, ^ and parentheses expressions", () => {

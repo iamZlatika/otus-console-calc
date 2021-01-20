@@ -1,4 +1,16 @@
-import { ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression, SqrExpression, FactExpression } from "./expression";
+import {
+  ValueExpression,
+  SumExpression,
+  SubExpression,
+  MulExpression,
+  DivExpression,
+  PowExpression,
+  SqrExpression,
+  FactExpression,
+  SinExpression,
+  CosExpression,
+  TanExpression,
+} from "./expression";
 
 describe("Value Expression", () => {
   it("Should return value", () => {
@@ -49,25 +61,78 @@ describe("Division expression", () => {
 
 describe("Power expression", () => {
   it("Should evaluate two values", () => {
-    const expression = new PowExpression(new ValueExpression("2"), new ValueExpression("10"))
+    const expression = new PowExpression(new ValueExpression("2"), new ValueExpression("10"));
     expect(expression.evaluate()).toBe(1024);
-  })
-})
+  });
+});
 
 describe("Square expression", () => {
   it("Should evaluate square", () => {
-    const expression = new SqrExpression(new ValueExpression("11"))
+    const expression = new SqrExpression(new ValueExpression("11"));
     expect(expression.evaluate()).toBe(121);
-  })
-})
+  });
+});
 
 describe("Factorial expression", () => {
   it("Should evaluate factorial", () => {
-    const expression = new FactExpression(new ValueExpression("5"))
+    const expression = new FactExpression(new ValueExpression("5"));
     expect(expression.evaluate()).toBe(120);
-  })
+  });
   it("Should throw exception for negative numbers", () => {
-    const expression = new FactExpression(new ValueExpression("-10"))
+    const expression = new FactExpression(new ValueExpression("-10"));
     expect(() => expression.evaluate()).toThrow();
-  })
-})
+  });
+});
+
+describe("Sine expression", () => {
+  it("Should evaluate sin 0", () => {
+    const expression = new SinExpression(new ValueExpression("0"));
+    expect(expression.evaluate()).toBeCloseTo(0);
+  });
+  it("Should evaluate sin 30", () => {
+    const expression = new SinExpression(new ValueExpression("30"));
+    expect(expression.evaluate()).toBeCloseTo(0.5);
+  });
+  it("Should evaluate sin 45", () => {
+    const expression = new SinExpression(new ValueExpression("45"));
+    expect(expression.evaluate()).toBeCloseTo(Math.sqrt(2) / 2);
+  });
+  it("Should evaluate sin 90", () => {
+    const expression = new SinExpression(new ValueExpression("90"));
+    expect(expression.evaluate()).toBeCloseTo(1);
+  });
+});
+
+describe("Cosine expression", () => {
+  it("Should evaluate cos 0", () => {
+    const expression = new CosExpression(new ValueExpression("0"));
+    expect(expression.evaluate()).toBeCloseTo(1);
+  });
+  it("Should evaluate cos 45", () => {
+    const expression = new CosExpression(new ValueExpression("45"));
+    expect(expression.evaluate()).toBeCloseTo(Math.sqrt(2) / 2);
+  });
+  it("Should evaluate cos 60", () => {
+    const expression = new CosExpression(new ValueExpression("60"));
+    expect(expression.evaluate()).toBeCloseTo(0.5);
+  });
+  it("Should evaluate cos 90", () => {
+    const expression = new CosExpression(new ValueExpression("90"));
+    expect(expression.evaluate()).toBeCloseTo(0);
+  });
+});
+
+describe("Tangent expression", () => {
+  it("Should evaluate tan 0", () => {
+    const expression = new TanExpression(new ValueExpression("0"));
+    expect(expression.evaluate()).toBeCloseTo(0);
+  });
+  it("Should evaluate tan 45", () => {
+    const expression = new TanExpression(new ValueExpression("45"));
+    expect(expression.evaluate()).toBeCloseTo(1);
+  });
+  it("Should evaluate tan 60", () => {
+    const expression = new TanExpression(new ValueExpression("60"));
+    expect(expression.evaluate()).toBeCloseTo(Math.sqrt(3));
+  });
+});
