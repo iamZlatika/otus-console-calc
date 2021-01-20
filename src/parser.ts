@@ -1,4 +1,4 @@
-import { Expression, ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression } from "./expression";
+import { Expression, ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression, SqrExpression } from "./expression";
 import { Lexer } from "./lexer";
 import { Token } from "./token";
 
@@ -6,7 +6,7 @@ export interface Parser {
   parse(): Expression;
 }
 
-const priorities = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3}
+const priorities = {"+": 1, "-": 1, "*": 2, "/": 2, "^": 3, "**": 3}
 
 export class ExpressionParser implements Parser {
   constructor(readonly lexer: Lexer) {}
@@ -46,6 +46,7 @@ export class ExpressionParser implements Parser {
       case "*": return new MulExpression(left, this.parseExpression(priorities[operation]));
       case "/": return new DivExpression(left, this.parseExpression(priorities[operation]));
       case "^": return new PowExpression(left, this.parseExpression(priorities[operation] - 1));
+      case "**": return new SqrExpression(left);
     }
     throw new Error(`Unsupported operation: ${operation}`)
   }

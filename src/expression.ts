@@ -46,3 +46,10 @@ export class PowExpression implements Expression {
     return Math.pow(this.left.evaluate(), this.right.evaluate());
   }
 }
+
+export class SqrExpression implements Expression {
+  constructor(readonly left: Expression) {}
+  evaluate(): number {
+    return Math.pow(this.left.evaluate(), 2);
+  }
+}

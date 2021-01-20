@@ -118,6 +118,16 @@ describe("Expression Parser", () => {
     })
   })
 
+  describe("Square", () => {
+    it("Should parse square expression", () => {
+      expect(evaluate("2 **")).toBe(4)
+    })
+
+    it("Should multiple square expression", () => {
+      expect(evaluate("3 ** **")).toBe(81)
+    })
+  })
+
   describe("Mixed expressions", () => {
     it("Should parse + and - expressions", () => {
       expect(evaluate("4 + 32 - 6 + 33 - 72")).toBe(4 + 32 - 6 + 33 - 72);
@@ -141,6 +151,10 @@ describe("Expression Parser", () => {
 
     it("Should parse +, -, /, *, ^ and parentheses expressions", () => {
       expect(evaluate("1 + 2 ^ ( 20 / 5 / 1 ) * 3 - 2 * 5 + 3")).toBe(42);
+    });
+
+    it("Should parse +, -, /, *, ^, ** and parentheses expressions", () => {
+      expect(evaluate("1 + 2 ^ ( 1 * 3 ) ** / ( 2 ^ 3 ) - 100500 ^ 0")).toBe(64);
     });
   });
 });

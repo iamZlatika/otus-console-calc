@@ -1,4 +1,4 @@
-import { ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression } from "./expression";
+import { ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression, SqrExpression } from "./expression";
 
 describe("Value Expression", () => {
   it("Should return value", () => {
@@ -51,5 +51,12 @@ describe("Power expression", () => {
   it("Should evaluate two values", () => {
     const expression = new PowExpression(new ValueExpression("2"), new ValueExpression("10"))
     expect(expression.evaluate()).toBe(1024);
+  })
+})
+
+describe("Square expression", () => {
+  it("Should evaluate square", () => {
+    const expression = new SqrExpression(new ValueExpression("11"))
+    expect(expression.evaluate()).toBe(121);
   })
 })
