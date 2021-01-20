@@ -53,3 +53,17 @@ export class SqrExpression implements Expression {
     return Math.pow(this.left.evaluate(), 2);
   }
 }
+
+export class FactExpression implements Expression {
+  constructor(readonly left: Expression) {}
+  evaluate(): number {
+    var value = this.left.evaluate()
+    if (value < 0)
+      throw new Error(`Unable to evaluate factorial of ${value}`)
+    return this.factorial(value);
+  }
+
+  private factorial(value: number): number {
+    return value <= 1 ? 1 : value * this.factorial(value - 1)
+  }
+}

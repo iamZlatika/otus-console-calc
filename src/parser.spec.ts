@@ -128,6 +128,24 @@ describe("Expression Parser", () => {
     })
   })
 
+  describe("Factorial", () => {
+    it("Should parse factorial expression", () => {
+      expect(evaluate("5 !")).toBe(120)
+    })
+
+    it("Should parse multiple factorials", () => {
+      expect(evaluate("2 ! ! ! !")).toBe(2)
+      expect(evaluate("3 ! !")).toBe(120 * 6)
+    })
+
+    it("Should parse factorial according to its priority", () => {
+      expect(evaluate("1 + 3 !")).toBe(7)
+      expect(evaluate("3 ! * 2")).toBe(12)
+      expect(evaluate("3 ! * 2 !")).toBe(12)
+      expect(evaluate("3 ! ^ 2")).toBe(36)
+    })
+  })
+
   describe("Mixed expressions", () => {
     it("Should parse + and - expressions", () => {
       expect(evaluate("4 + 32 - 6 + 33 - 72")).toBe(4 + 32 - 6 + 33 - 72);
@@ -155,6 +173,10 @@ describe("Expression Parser", () => {
 
     it("Should parse +, -, /, *, ^, ** and parentheses expressions", () => {
       expect(evaluate("1 + 2 ^ ( 1 * 3 ) ** / ( 2 ^ 3 ) - 100500 ^ 0")).toBe(64);
+    });
+
+    it("Should parse +, -, /, *, ^, **, ! and parentheses expressions", () => {
+      expect(evaluate("( 2 ^ ( 3 ! - 1 ) ) * ( 1 + 2 )")).toBe(96);
     });
   });
 });

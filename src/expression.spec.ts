@@ -1,4 +1,4 @@
-import { ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression, SqrExpression } from "./expression";
+import { ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression, PowExpression, SqrExpression, FactExpression } from "./expression";
 
 describe("Value Expression", () => {
   it("Should return value", () => {
@@ -58,5 +58,16 @@ describe("Square expression", () => {
   it("Should evaluate square", () => {
     const expression = new SqrExpression(new ValueExpression("11"))
     expect(expression.evaluate()).toBe(121);
+  })
+})
+
+describe("Factorial expression", () => {
+  it("Should evaluate factorial", () => {
+    const expression = new FactExpression(new ValueExpression("5"))
+    expect(expression.evaluate()).toBe(120);
+  })
+  it("Should throw exception for negative numbers", () => {
+    const expression = new FactExpression(new ValueExpression("-10"))
+    expect(() => expression.evaluate()).toThrow();
   })
 })
