@@ -13,8 +13,6 @@ export class ExpressionParser implements Parser {
 
   parse(): Expression {
     let result = this.parseToken();
-    if (!result)
-      return undefined;
     let operation: Token;
     while ((operation = this.lexer.extractToken()) && operation.text !== ")") {
       result = this.processOperation(result, operation.text);
@@ -22,37 +20,34 @@ export class ExpressionParser implements Parser {
     return result;
   }
 
-  private processParenthenses(): Expression {
-    return this.parse();
+  parseExpression(priority: number): Expression {
+    let result = this.parseToken();
+    while (priority < priorities[this.nextOperation()]) {
+      result = this.processOperation(result, this.lexer.extractToken().text);
+    }
+    return result;
   }
 
   private parseToken(): Expression {
     const token = this.lexer.extractToken();
-    if (!token)
+    if (!token) {
       return undefined;
+    }
     if (token.text === "(") {
-      return this.processParenthenses();
+      return this.parse();
     }
     return new ValueExpression(token.text);
   }
 
   private processOperation(left: Expression, operation: string){
     switch (operation) {
-      case "+": return new SumExpression(left, this.parseRightArg(priorities[operation]));
-      case "-": return new SubExpression(left, this.parseRightArg(priorities[operation]));
-      case "*": return new MulExpression(left, this.parseRightArg(priorities[operation]));
-      case "/": return new DivExpression(left, this.parseRightArg(priorities[operation]));
-      case "^": return new PowExpression(left, this.parseRightArg(priorities[operation] - 1));
+      case "+": return new SumExpression(left, this.parseExpression(priorities[operation]));
+      case "-": return new SubExpression(left, this.parseExpression(priorities[operation]));
+      case "*": return new MulExpression(left, this.parseExpression(priorities[operation]));
+      case "/": return new DivExpression(left, this.parseExpression(priorities[operation]));
+      case "^": return new PowExpression(left, this.parseExpression(priorities[operation] - 1));
     }
     throw new Error(`Unsupported operation: ${operation}`)
-  }
-
-  parseRightArg(priority: number): Expression {
-    let result = this.parseToken();
-    while (priority < priorities[this.nextOperation()]) {
-      result = this.processOperation(result, this.lexer.extractToken().text);
-    }
-    return result;
   }
 
   private nextOperation(): string {

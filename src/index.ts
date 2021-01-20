@@ -7,6 +7,16 @@ const rl = createInterface({
   output: process.stdout,
 });
 
+const evaluate = (expression: string): number => {
+    const parsedExpression = new ExpressionParser(new ExpressionLexer(expression)).parse();
+    try {
+        const result = expression ? parsedExpression.evaluate() : undefined;
+        return result;
+    } catch(e) {
+        console.log(e.message)
+    }
+}
+
 const question = (): Promise<boolean> =>
   new Promise((resolve) => {
     rl.question("> ", (answer: string) => {
@@ -14,8 +24,7 @@ const question = (): Promise<boolean> =>
         resolve(false);
         return;
       }
-      const expression = new ExpressionParser(new ExpressionLexer(answer)).parse();
-      const result = expression ? expression.evaluate() : undefined;
+      const result = evaluate(answer);
       if (result !== undefined) {
         console.log(`Result: ${result}\n`);
       }
