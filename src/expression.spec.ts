@@ -1,4 +1,4 @@
-import { ValueExpression, SumExpression, SubtractionExpression, MultiplicationExpression, DivisionExpression } from "./expression";
+import { ValueExpression, SumExpression, SubExpression, MulExpression, DivExpression } from "./expression";
 
 describe("Value Expression", () => {
   it("Should return value", () => {
@@ -24,21 +24,21 @@ describe("Sum Expression", () => {
 
 describe("Subtraction expression", () => {
   it("Should evaluate two values", () => {
-    const expression = new SubtractionExpression(new ValueExpression("33"), new ValueExpression("54"));
+    const expression = new SubExpression(new ValueExpression("33"), new ValueExpression("54"));
     expect(expression.evaluate()).toBe(33 - 54);
   });
 });
 
 describe("Multiplication expression", () => {
   it("Should evaluate two values", () => {
-    const expression = new MultiplicationExpression(new ValueExpression("23"), new ValueExpression("11"));
+    const expression = new MulExpression(new ValueExpression("23"), new ValueExpression("11"));
     expect(expression.evaluate()).toBe(23 * 11);
   });
 });
 
 describe("Division expression", () => {
   it("Should evaluate two values", () => {
-    const expression = new DivisionExpression(new ValueExpression("10"), new ValueExpression("5"));
+    const expression = new DivExpression(new ValueExpression("10"), new ValueExpression("5"));
     expect(expression.evaluate()).toBe(10 / 5);
   });
 });

@@ -16,21 +16,21 @@ export class SumExpression implements Expression {
   }
 }
 
-export class SubtractionExpression implements Expression {
+export class SubExpression implements Expression {
   constructor(readonly left: Expression, readonly right: Expression) {}
   evaluate(): number {
     return this.left.evaluate() - this.right.evaluate();
   }
 }
 
-export class MultiplicationExpression implements Expression {
+export class MulExpression implements Expression {
   constructor(readonly left: Expression, readonly right: Expression) {}
   evaluate(): number {
     return this.left.evaluate() * this.right.evaluate();
   }
 }
 
-export class DivisionExpression implements Expression {
+export class DivExpression implements Expression {
   constructor(readonly left: Expression, readonly right: Expression) {}
   evaluate(): number {
     return this.left.evaluate() / this.right.evaluate();
