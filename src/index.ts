@@ -7,7 +7,7 @@ const rl = createInterface({
   output: process.stdout,
 });
 
-const evaluate = (expression: string): number => {
+const evaluate = (expression: string): number | undefined => {
   const parsedExpression = new ExpressionParser(new ExpressionLexer(expression)).parse();
   try {
     return parsedExpression ? parsedExpression.evaluate() : undefined;

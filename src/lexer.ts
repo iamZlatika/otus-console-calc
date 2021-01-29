@@ -1,11 +1,11 @@
 import { Token } from "./token";
 
 export interface Lexer {
-  extractToken(): Token;
-  readToken(): Token;
+  extractToken(): Token | undefined;
+  readToken(): Token | undefined;
 }
 
-const operations = new Set<string>(["+", "-", "*", "/", "(", ")", "^", "**", "!", "sin", "cos", "tan"]);
+const operations = new Set<string>(["+", "-", "*", "/", "(", ")", "^", "**", "!", "sin", "cos", "tan", "fib"]);
 
 export class ExpressionLexer implements Lexer {
   private readonly words: string[];
@@ -14,15 +14,15 @@ export class ExpressionLexer implements Lexer {
     this.words = expression.split(" ");
   }
 
-  extractToken(): Token {
+  extractToken(): Token | undefined {
     return this.toToken(this.words.shift());
   }
 
-  readToken(): Token {
+  readToken(): Token | undefined {
     return this.toToken(this.words[0]);
   }
 
-  private toToken(word: string) {
+  private toToken(word: string | undefined): Token | undefined {
     if (!word) {
       return undefined;
     }

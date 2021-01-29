@@ -20,6 +20,9 @@ Result: 7
 > 2 * 3 * 4 - 20 / 5 + 5 * 6 - 2 * 2 * 2
 Result: 42
 
+> sin ( fib ( 5 + 5 ) ^ 2 )
+Result: 0.5735764363510457
+
 > exit
 ```
 
@@ -30,3 +33,4 @@ Result: 42
 - power: `^`
 - factorial `!`
 - trigonometric functions: `sin`, `cos`, `tan`
+- fibonacci `fib`

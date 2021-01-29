@@ -10,6 +10,7 @@ import {
   SinExpression,
   CosExpression,
   TanExpression,
+  FibExpression,
 } from "./expression";
 
 describe("Value Expression", () => {
@@ -85,54 +86,59 @@ describe("Factorial expression", () => {
 });
 
 describe("Sine expression", () => {
-  it("Should evaluate sin 0", () => {
-    const expression = new SinExpression(new ValueExpression("0"));
-    expect(expression.evaluate()).toBeCloseTo(0);
-  });
-  it("Should evaluate sin 30", () => {
-    const expression = new SinExpression(new ValueExpression("30"));
-    expect(expression.evaluate()).toBeCloseTo(0.5);
-  });
-  it("Should evaluate sin 45", () => {
-    const expression = new SinExpression(new ValueExpression("45"));
-    expect(expression.evaluate()).toBeCloseTo(Math.sqrt(2) / 2);
-  });
-  it("Should evaluate sin 90", () => {
-    const expression = new SinExpression(new ValueExpression("90"));
-    expect(expression.evaluate()).toBeCloseTo(1);
+  const testCases: [string, number][] = [
+    ["0", 0],
+    ["30", 0.5],
+    ["45", Math.sqrt(2) / 2],
+    ["90", 1],
+  ];
+  it.each(testCases)("Should evaluate sin %s to be close to %d", (value, expected) => {
+    const expression = new SinExpression(new ValueExpression(value));
+    expect(expression.evaluate()).toBeCloseTo(expected);
   });
 });
 
 describe("Cosine expression", () => {
-  it("Should evaluate cos 0", () => {
-    const expression = new CosExpression(new ValueExpression("0"));
-    expect(expression.evaluate()).toBeCloseTo(1);
-  });
-  it("Should evaluate cos 45", () => {
-    const expression = new CosExpression(new ValueExpression("45"));
-    expect(expression.evaluate()).toBeCloseTo(Math.sqrt(2) / 2);
-  });
-  it("Should evaluate cos 60", () => {
-    const expression = new CosExpression(new ValueExpression("60"));
-    expect(expression.evaluate()).toBeCloseTo(0.5);
-  });
-  it("Should evaluate cos 90", () => {
-    const expression = new CosExpression(new ValueExpression("90"));
-    expect(expression.evaluate()).toBeCloseTo(0);
+  const testCases: [string, number][] = [
+    ["0", 1],
+    ["45", Math.sqrt(2) / 2],
+    ["60", 0.5],
+    ["90", 0],
+  ];
+  it.each(testCases)("Should evaluate cos %s to be close to %d", (value: string, expected: number) => {
+    const expression = new CosExpression(new ValueExpression(value));
+    expect(expression.evaluate()).toBeCloseTo(expected);
   });
 });
 
 describe("Tangent expression", () => {
-  it("Should evaluate tan 0", () => {
-    const expression = new TanExpression(new ValueExpression("0"));
-    expect(expression.evaluate()).toBeCloseTo(0);
+  const testCases: [string, number][] = [
+    ["0", 0],
+    ["45", 1],
+    ["60", Math.sqrt(3)],
+  ];
+  it.each(testCases)("Should evaluate tan %s to be close to %d", (value, expected) => {
+    const expression = new TanExpression(new ValueExpression(value));
+    expect(expression.evaluate()).toBeCloseTo(expected);
   });
-  it("Should evaluate tan 45", () => {
-    const expression = new TanExpression(new ValueExpression("45"));
-    expect(expression.evaluate()).toBeCloseTo(1);
+});
+
+describe("Fibonacci expression", () => {
+  const invalidArguments = ["-1", "30", "100500"];
+  it.each(invalidArguments)("Should throw an error given invalid argument: %i", (arg) => {
+    const expression = new FibExpression(new ValueExpression(arg));
+    expect(() => expression.evaluate()).toThrow();
   });
-  it("Should evaluate tan 60", () => {
-    const expression = new TanExpression(new ValueExpression("60"));
-    expect(expression.evaluate()).toBeCloseTo(Math.sqrt(3));
+
+  const testCases: [string, number][] = [
+    ["1", 1],
+    ["2", 1],
+    ["3", 2],
+    ["4", 3],
+    ["10", 55],
+  ];
+  it.each(testCases)("Should evaluate fib %i to be equal to %i", (value, expected) => {
+    const expression = new FibExpression(new ValueExpression(value));
+    expect(expression.evaluate()).toBe(expected);
   });
 });

@@ -97,3 +97,23 @@ export class TanExpression implements Expression {
     return Math.tan(value);
   }
 }
+
+export class FibExpression implements Expression {
+  constructor(readonly right: Expression) {}
+
+  evaluate(): number {
+    const value = this.right.evaluate();
+    if (value < 0) {
+      throw new Error(`Unable to evaluate fibonacci: negative number ${value}`);
+    }
+    if (value >= 30) {
+      throw new Error(`Unable to evaluate fibonacci: value too large number: ${value}`);
+    }
+    return this.fibonacci(value);
+  }
+
+  private fibonacci(value: number): number {
+    if (value === 0) return 0;
+    return value <= 2 ? 1 : this.fibonacci(value - 1) + this.fibonacci(value - 2);
+  }
+}

@@ -47,102 +47,6 @@ describe("Expression Lexer", () => {
     });
   });
 
-  it("Should process operation +", () => {
-    const lexer = new ExpressionLexer("+");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "+",
-    });
-  });
-
-  it("Should process operation -", () => {
-    const lexer = new ExpressionLexer("-");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "-",
-    });
-  });
-
-  it("Should process operation *", () => {
-    const lexer = new ExpressionLexer("*");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "*",
-    });
-  });
-
-  it("Should process operation /", () => {
-    const lexer = new ExpressionLexer("/");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "/",
-    });
-  });
-
-  it("Should process )", () => {
-    const lexer = new ExpressionLexer(")");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: ")",
-    });
-  });
-
-  it("Should process (", () => {
-    const lexer = new ExpressionLexer("(");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "(",
-    });
-  });
-
-  it("Should process ^", () => {
-    const lexer = new ExpressionLexer("^");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "^",
-    });
-  });
-
-  it("Should process **", () => {
-    const lexer = new ExpressionLexer("**");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "**",
-    });
-  });
-
-  it("Should process !", () => {
-    const lexer = new ExpressionLexer("!");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "!",
-    });
-  });
-
-  it("Should process sin", () => {
-    const lexer = new ExpressionLexer("sin");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "sin",
-    });
-  });
-
-  it("Should process cos", () => {
-    const lexer = new ExpressionLexer("cos");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "cos",
-    });
-  });
-
-  it("Should process tan", () => {
-    const lexer = new ExpressionLexer("tan");
-    expect(lexer.extractToken()).toMatchObject({
-      type: "operation",
-      text: "tan",
-    });
-  });
-
   it("Should read token", () => {
     const lexer = new ExpressionLexer("*");
     expect(lexer.readToken()).toMatchObject({
@@ -164,4 +68,15 @@ describe("Expression Lexer", () => {
       text: "*",
     });
   });
+
+  it.each(["+", "-", "*", "/", "(", ")", "^", "**", "!", "sin", "cos", "tan", "fib"])(
+    "Should process operations %s",
+    (operation) => {
+      const lexer = new ExpressionLexer(operation);
+      expect(lexer.extractToken()).toMatchObject({
+        type: "operation",
+        text: operation,
+      });
+    }
+  );
 });

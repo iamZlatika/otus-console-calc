@@ -68,40 +68,19 @@ describe("Expression Parser", () => {
   });
 
   describe("Parentheses", () => {
-    it("Should parse value within parentheses", () => {
-      expect(evaluate("( 1 )")).toBe(1);
-    });
-
-    it("Should parse expression within parentheses", () => {
-      expect(evaluate("( 1 + 2 )")).toBe(3);
-    });
-
-    it("Should parse expression with constant within parentheses", () => {
-      expect(evaluate("1 + ( 2 )")).toBe(3);
-    });
-
-    it("Should parse expression with expression within parentheses", () => {
-      expect(evaluate("1 + ( 2 + 3 )")).toBe(6);
-    });
-
-    it("Should parse expression with parentheses changing evaluation priority", () => {
-      expect(evaluate("2 * ( 3 + 4 )")).toBe(14);
-    });
-
-    it("Should parse another expression with parentheses changing evaluation priority", () => {
-      expect(evaluate("( 2 + 1 ) * 3")).toBe(9);
-    });
-
-    it("Should parse multiple expressions with parentheses", () => {
-      expect(evaluate("( 2 + 1 ) * ( 3 + 4 )")).toBe((2 + 1) * (3 + 4));
-    });
-
-    it("Should parse nested expressions with parentheses", () => {
-      expect(evaluate("( 2 + 1 ) * ( 3 * ( 2 + 2 ) )")).toBe((2 + 1) * (3 * (2 + 2)));
-    });
-
-    it("Should parse multi level parentheses nesting", () => {
-      expect(evaluate("2 * ( 2 * ( 2 * ( 2 * ( 1 + 2 ) ) ) ) ) )")).toBe(2 * (2 * (2 * (2 * (1 + 2)))));
+    const testCases: [string, number][] = [
+      ["( 1 )", 1],
+      ["( 1 + 2 )", 3],
+      ["1 + ( 2 )", 3],
+      ["1 + ( 2 + 3 )", 6],
+      ["2 * ( 3 + 4 )", 14],
+      ["( 2 + 1 ) * 3", 9],
+      ["( 2 + 1 ) * ( 3 + 4 )", (2 + 1) * (3 + 4)],
+      ["( 2 + 1 ) * ( 3 * ( 2 + 2 ) )", (2 + 1) * (3 * (2 + 2))],
+      ["2 * ( 2 * ( 2 * ( 2 * ( 1 + 2 ) ) ) ) ) )", 2 * (2 * (2 * (2 * (1 + 2))))],
+    ];
+    it.each(testCases)("Should parse expression %s = %i", (expression, result) => {
+      expect(evaluate(expression)).toBe(result);
     });
   });
 
@@ -184,41 +163,38 @@ describe("Expression Parser", () => {
     });
   });
 
+  describe("Fibonacci", () => {
+    it("Should parse tan expression", () => {
+      expect(evaluate("fib 0")).toBe(0);
+    });
+    it("Should parse sin according to its priority", () => {
+      expect(evaluate("fib 0 + 1")).toBe(1);
+      expect(evaluate("fib 1 * 5")).toBeCloseTo(5);
+      expect(evaluate("fib 5 !")).toBeCloseTo(120);
+    });
+  });
+
   describe("Mixed expressions", () => {
-    it("Should parse + and - expressions", () => {
-      expect(evaluate("4 + 32 - 6 + 33 - 72")).toBe(4 + 32 - 6 + 33 - 72);
-    });
+    const testCases: [string, number][] = [
+      ["4 + 32 - 6 + 33 - 72", 4 + 32 - 6 + 33 - 72],
+      ["10 * 5 + 1", 10 * 5 + 1],
+      ["1 + 10 * 5", 1 + 10 * 5],
+      ["1 + 10 * 5 + 1", 1 + 10 * 5 + 1],
+      ["97 * 6 - 6 + 7 * 4", 97 * 6 - 6 + 7 * 4],
+      ["1 + 2 * 2 * 2 + 1", 1 + 2 * 2 * 2 + 1],
+      [
+        "1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8",
+        1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8,
+      ],
+      ["( 2 + 3 + 4 * ( 1 + 7 - 18 ) / ( ( 1 + 2 ) * 3 + 1 )", 2 + 3 + (4 * (1 + 7 - 18)) / ((1 + 2) * 3 + 1)],
+      ["1 + 2 ^ ( 20 / 5 / 1 ) * 3 - 2 * 5 + 3", 42],
+      ["1 + 2 ^ ( 1 * 3 ) ** / ( 2 ^ 3 ) - 100500 ^ 0", 64],
+      ["( 2 ^ ( 3 ! - 1 ) ) * ( 1 + 2 )", 96],
+      ["fib ( 2 ^ ( fib 3 ) ) * 4 + 1", 13],
+    ];
 
-    it("Should parse +, - and * expressions", () => {
-      expect(evaluate("10 * 5 + 1")).toBe(10 * 5 + 1);
-      expect(evaluate("1 + 10 * 5")).toBe(1 + 10 * 5);
-      expect(evaluate("1 + 10 * 5 + 1")).toBe(1 + 10 * 5 + 1);
-      expect(evaluate("97 * 6 - 6 + 7 * 4")).toBe(97 * 6 - 6 + 7 * 4);
-    });
-
-    it("Should parse +, -, / and * expressions", () => {
-      expect(evaluate("1 + 2 * 2 * 2 + 1")).toBe(1 + 2 * 2 * 2 + 1);
-      expect(evaluate("1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8")).toBe(
-        1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8
-      );
-    });
-
-    it("Should parse +, -, / and *, and parentheses expressions", () => {
-      expect(evaluate("( 2 + 3 + 4 * ( 1 + 7 - 18 ) / ( ( 1 + 2 ) * 3 + 1 )")).toBe(
-        2 + 3 + (4 * (1 + 7 - 18)) / ((1 + 2) * 3 + 1)
-      );
-    });
-
-    it("Should parse +, -, /, *, ^ and parentheses expressions", () => {
-      expect(evaluate("1 + 2 ^ ( 20 / 5 / 1 ) * 3 - 2 * 5 + 3")).toBe(42);
-    });
-
-    it("Should parse +, -, /, *, ^, ** and parentheses expressions", () => {
-      expect(evaluate("1 + 2 ^ ( 1 * 3 ) ** / ( 2 ^ 3 ) - 100500 ^ 0")).toBe(64);
-    });
-
-    it("Should parse +, -, /, *, ^, **, ! and parentheses expressions", () => {
-      expect(evaluate("( 2 ^ ( 3 ! - 1 ) ) * ( 1 + 2 )")).toBe(96);
+    it.each(testCases)("Should parse %s", (expression, result) => {
+      expect(evaluate(expression)).toBe(result);
     });
   });
 });

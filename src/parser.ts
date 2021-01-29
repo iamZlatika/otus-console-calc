@@ -11,33 +11,43 @@ import {
   SinExpression,
   TanExpression,
   CosExpression,
+  FibExpression,
 } from "./expression";
 import { Lexer } from "./lexer";
 import { Token } from "./token";
 
 export interface Parser {
-  parse(): Expression;
+  parse(): Expression | undefined;
 }
 
-const priorities = {
-  "+": 1,
-  "-": 1,
-  "*": 2,
-  "/": 2,
-  "^": 3,
-  "**": 3,
-  "!": 3,
-  sin: 4,
-  cos: 4,
-  tan: 4,
+const priorities = new Map<string, number>()
+  .set("+", 2)
+  .set("-", 2)
+  .set("*", 3)
+  .set("/", 3)
+  .set("^", 4)
+  .set("**", 4)
+  .set("!", 4)
+  .set("sin", 5)
+  .set("cos", 5)
+  .set("tan", 5)
+  .set("fib", 5)
+  .set("(", 100);
+
+const getPriority = (operation: string | undefined): number => {
+  if (!operation) return -1;
+  const priority = priorities.get(operation);
+  if (priority) return priority;
+  return -1;
 };
 
 export class ExpressionParser implements Parser {
   constructor(readonly lexer: Lexer) {}
 
-  parse(): Expression {
+  parse(): Expression | undefined {
     let result = this.parseToken();
-    let operation: Token;
+    if (!result) return undefined;
+    let operation: Token | undefined;
     while ((operation = this.lexer.extractToken()) && operation.text !== ")") {
       result = this.processOperation(result, operation.text);
     }
@@ -46,13 +56,16 @@ export class ExpressionParser implements Parser {
 
   parseExpression(priority: number): Expression {
     let result = this.parseToken();
-    while (priority < priorities[this.nextOperation()]) {
-      result = this.processOperation(result, this.lexer.extractToken().text);
+    if (!result) throw new Error("Undefined token");
+    while (priority < getPriority(this.nextOperation())) {
+      const token = this.lexer.extractToken();
+      if (!token) throw new Error("Undefined token");
+      result = this.processOperation(result as Expression, token.text);
     }
     return result;
   }
 
-  private parseToken(): Expression {
+  private parseToken(): Expression | undefined {
     const token = this.lexer.extractToken();
     if (!token) {
       return undefined;
@@ -65,27 +78,29 @@ export class ExpressionParser implements Parser {
       case "(":
         return this.parse();
       case "sin":
-        return new SinExpression(this.parseExpression(priorities[operation]));
+        return new SinExpression(this.parseExpression(getPriority(operation)));
       case "cos":
-        return new CosExpression(this.parseExpression(priorities[operation]));
+        return new CosExpression(this.parseExpression(getPriority(operation)));
       case "tan":
-        return new TanExpression(this.parseExpression(priorities[operation]));
+        return new TanExpression(this.parseExpression(getPriority(operation)));
+      case "fib":
+        return new FibExpression(this.parseExpression(getPriority(operation)));
     }
     throw new Error(`Unsupported operation: ${operation}`);
   }
 
-  private processOperation(left: Expression, operation: string) {
+  private processOperation(left: Expression, operation: string): Expression {
     switch (operation) {
       case "+":
-        return new SumExpression(left, this.parseExpression(priorities[operation]));
+        return new SumExpression(left, this.parseExpression(getPriority(operation)));
       case "-":
-        return new SubExpression(left, this.parseExpression(priorities[operation]));
+        return new SubExpression(left, this.parseExpression(getPriority(operation)));
       case "*":
-        return new MulExpression(left, this.parseExpression(priorities[operation]));
+        return new MulExpression(left, this.parseExpression(getPriority(operation)));
       case "/":
-        return new DivExpression(left, this.parseExpression(priorities[operation]));
+        return new DivExpression(left, this.parseExpression(getPriority(operation)));
       case "^":
-        return new PowExpression(left, this.parseExpression(priorities[operation] - 1));
+        return new PowExpression(left, this.parseExpression(getPriority(operation) - 1));
       case "**":
         return new SqrExpression(left);
       case "!":
@@ -94,8 +109,10 @@ export class ExpressionParser implements Parser {
     throw new Error(`Unsupported operation: ${operation}`);
   }
 
-  private nextOperation(): string {
+  private nextOperation(): string | undefined {
     const token = this.lexer.readToken();
-    return token ? token.text : undefined;
+    if (!token) return undefined;
+    if (token.type !== "operation") throw new Error("Unexpected value");
+    return token.text;
   }
 }
