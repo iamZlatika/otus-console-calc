@@ -11,6 +11,8 @@ import {
   CosExpression,
   TanExpression,
   FibExpression,
+  NegExpression,
+  PosExpression,
 } from "./expression";
 
 describe("Value Expression", () => {
@@ -140,5 +142,19 @@ describe("Fibonacci expression", () => {
   it.each(testCases)("Should evaluate fib %i to be equal to %i", (value, expected) => {
     const expression = new FibExpression(new ValueExpression(value));
     expect(expression.evaluate()).toBe(expected);
+  });
+});
+
+describe("Negate expression", () => {
+  it("Should evaluate negation", () => {
+    const expression = new NegExpression(new ValueExpression("42"));
+    expect(expression.evaluate()).toBe(-42);
+  });
+});
+
+describe("Negate expression", () => {
+  it("Should evaluate negation", () => {
+    const expression = new PosExpression(new NegExpression(new ValueExpression("42")));
+    expect(expression.evaluate()).toBe(-42);
   });
 });

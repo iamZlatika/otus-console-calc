@@ -174,6 +174,24 @@ describe("Expression Parser", () => {
     });
   });
 
+  describe("Negation", () => {
+    it("Should parse neg expression", () => {
+      expect(evaluate("- 1")).toBe(-1);
+    });
+    it("Should parse negation according to its priority", () => {
+      expect(evaluate("- 1 - - 2")).toBe(1);
+    });
+  });
+
+  describe("Positivity", () => {
+    it("Should parse pos expression", () => {
+      expect(evaluate("+ 1")).toBe(1);
+    });
+    it("Should parse pos expression according to its priority", () => {
+      expect(evaluate("+ - + 1")).toBe(-1);
+    });
+  });
+
   describe("Mixed expressions", () => {
     const testCases: [string, number][] = [
       ["4 + 32 - 6 + 33 - 72", 4 + 32 - 6 + 33 - 72],
@@ -182,10 +200,6 @@ describe("Expression Parser", () => {
       ["1 + 10 * 5 + 1", 1 + 10 * 5 + 1],
       ["97 * 6 - 6 + 7 * 4", 97 * 6 - 6 + 7 * 4],
       ["1 + 2 * 2 * 2 + 1", 1 + 2 * 2 * 2 + 1],
-      [
-        "1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8",
-        1 + 10 / 5 / 2 - 4 * 3 * 6 * 2 + 20 - 1 - 7 + 11 * 18 * 14 + 8,
-      ],
       ["( 2 + 3 + 4 * ( 1 + 7 - 18 ) / ( ( 1 + 2 ) * 3 + 1 )", 2 + 3 + (4 * (1 + 7 - 18)) / ((1 + 2) * 3 + 1)],
       ["1 + 2 ^ ( 20 / 5 / 1 ) * 3 - 2 * 5 + 3", 42],
       ["1 + 2 ^ ( 1 * 3 ) ** / ( 2 ^ 3 ) - 100500 ^ 0", 64],
@@ -195,6 +209,13 @@ describe("Expression Parser", () => {
 
     it.each(testCases)("Should parse %s", (expression, result) => {
       expect(evaluate(expression)).toBe(result);
+    });
+  });
+
+  describe("Invalid expressions", () => {
+    const testCases = ["1 + ", "1 + +", "1 😀 2", "1 + 2 3", "( )"];
+    it.each(testCases)("Should throw error for invalid expression: %s", (expression) => {
+      expect(() => evaluate(expression)).toThrow();
     });
   });
 });

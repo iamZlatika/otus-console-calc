@@ -1,40 +1,35 @@
 import { createInterface } from "readline";
-import { ExpressionLexer } from "./lexer";
-import { ExpressionParser } from "./parser";
+import { evaluate } from "./engine";
 
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const evaluate = (expression: string): number | undefined => {
-  const parsedExpression = new ExpressionParser(new ExpressionLexer(expression)).parse();
-  try {
-    return parsedExpression ? parsedExpression.evaluate() : undefined;
-  } catch (e) {
-    console.log(e.message);
-  }
-};
-
-const question = (): Promise<boolean> =>
+const question = (): Promise<void> =>
   new Promise((resolve) => {
     rl.question("> ", (answer: string) => {
       if (answer === "exit") {
-        resolve(false);
-        return;
+        process.exit(0);
       }
-      const result = evaluate(answer);
-      if (result !== undefined) {
+      const [error, result] = evaluate(answer);
+      if (error) {
+        console.log(error.message);
+      } else if (result !== undefined) {
         console.log(`Result: ${result}\n`);
       }
-      resolve(true);
+      resolve();
     });
   });
 
 async function app() {
-  while (await question()) {}
+  console.log("┌────────────────────┐");
+  console.log("│ Console Calculator │");
+  console.log("└────────────────────┘");
+
+  while (true) {
+    await question();
+  }
 }
 
-app().then(() => {
-  process.exit(0);
-});
+app();

@@ -6,8 +6,9 @@
   "scripts": {
     "test": "jest --coverage",
     "lint": "npx eslint --ext .js,.ts --fix ./",
-    "calc": "npm run build && node ./dist/index.js",
-    "build": "tsc -b"
+    "calc": "node ./dist/calc.js",
+    "build": "npx webpack",
+    "clean": "rm -rf coverage dist"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,7 @@
     "@types/jest": "^26.0.20",
     "@typescript-eslint/eslint-plugin": "^4.13.0",
     "@typescript-eslint/parser": "^4.13.0",
+    "babel-loader": "^8.2.2",
     "eslint": "^7.18.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-jest": "^24.1.3",
@@ -35,6 +37,8 @@
     "prettier": "2.2.1",
     "prettier-eslint": "^12.0.0",
     "ts-node": "^9.1.1",
-    "typescript": "^4.1.3"
+    "typescript": "^4.1.3",
+    "webpack-cli": "^4.4.0",
+    "webpack": "^5.19.0"
   }
 }

@@ -18,5 +18,7 @@ module.exports = {
   plugins: ["@typescript-eslint", "jest"],
   rules: {
     "max-len": ["error", { code: 120 }],
+    "@typescript-eslint/no-var-requires": "off",
+    "@typescript-eslint/no-non-null-assertion": "off",
   },
 };

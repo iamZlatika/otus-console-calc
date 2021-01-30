@@ -104,10 +104,10 @@ export class FibExpression implements Expression {
   evaluate(): number {
     const value = this.right.evaluate();
     if (value < 0) {
-      throw new Error(`Unable to evaluate fibonacci: negative number ${value}`);
+      throw new Error(`Unable to evaluate fibonacci: negative number (${value})`);
     }
     if (value >= 30) {
-      throw new Error(`Unable to evaluate fibonacci: value too large number: ${value}`);
+      throw new Error(`Unable to evaluate fibonacci: value too large (${value})`);
     }
     return this.fibonacci(value);
   }
@@ -115,5 +115,19 @@ export class FibExpression implements Expression {
   private fibonacci(value: number): number {
     if (value === 0) return 0;
     return value <= 2 ? 1 : this.fibonacci(value - 1) + this.fibonacci(value - 2);
+  }
+}
+
+export class NegExpression implements Expression {
+  constructor(readonly rigth: Expression) {}
+  evaluate(): number {
+    return -this.rigth.evaluate();
+  }
+}
+
+export class PosExpression implements Expression {
+  constructor(readonly rigth: Expression) {}
+  evaluate(): number {
+    return this.rigth.evaluate();
   }
 }

@@ -12,6 +12,8 @@ import {
   TanExpression,
   CosExpression,
   FibExpression,
+  NegExpression,
+  PosExpression,
 } from "./expression";
 import { Lexer } from "./lexer";
 import { Token } from "./token";
@@ -35,9 +37,13 @@ const priorities = new Map<string, number>()
   .set("(", 100);
 
 const getPriority = (operation: string | undefined): number => {
-  if (!operation) return -1;
+  if (!operation) {
+    return -1;
+  }
   const priority = priorities.get(operation);
-  if (priority) return priority;
+  if (priority) {
+    return priority;
+  }
   return -1;
 };
 
@@ -46,7 +52,9 @@ export class ExpressionParser implements Parser {
 
   parse(): Expression | undefined {
     let result = this.parseToken();
-    if (!result) return undefined;
+    if (!result) {
+      return undefined;
+    }
     let operation: Token | undefined;
     while ((operation = this.lexer.extractToken()) && operation.text !== ")") {
       result = this.processOperation(result, operation.text);
@@ -54,13 +62,14 @@ export class ExpressionParser implements Parser {
     return result;
   }
 
-  parseExpression(priority: number): Expression {
+  private parseExpression(priority: number): Expression {
     let result = this.parseToken();
-    if (!result) throw new Error("Undefined token");
+    if (!result) {
+      throw new Error("Unexpected end of expression");
+    }
     while (priority < getPriority(this.nextOperation())) {
-      const token = this.lexer.extractToken();
-      if (!token) throw new Error("Undefined token");
-      result = this.processOperation(result as Expression, token.text);
+      const operationToken = this.lexer.extractToken();
+      result = this.processOperation(result, operationToken!.text);
     }
     return result;
   }
@@ -85,8 +94,12 @@ export class ExpressionParser implements Parser {
         return new TanExpression(this.parseExpression(getPriority(operation)));
       case "fib":
         return new FibExpression(this.parseExpression(getPriority(operation)));
+      case "-":
+        return new NegExpression(this.parseExpression(getPriority(operation)));
+      case "+":
+        return new PosExpression(this.parseExpression(getPriority(operation)));
     }
-    throw new Error(`Unsupported operation: ${operation}`);
+    throw new Error(`Unsupported prefix operation: ${operation}`);
   }
 
   private processOperation(left: Expression, operation: string): Expression {
@@ -111,8 +124,12 @@ export class ExpressionParser implements Parser {
 
   private nextOperation(): string | undefined {
     const token = this.lexer.readToken();
-    if (!token) return undefined;
-    if (token.type !== "operation") throw new Error("Unexpected value");
+    if (!token) {
+      return undefined;
+    }
+    if (token.type !== "operation") {
+      throw new Error("Invalid expression");
+    }
     return token.text;
   }
 }
