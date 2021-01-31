@@ -1,16 +1,16 @@
+import { Grammar } from "./grammar";
 import { Token } from "./token";
 
 export interface Lexer {
+  readonly grammar: Grammar;
   extractToken(): Token | undefined;
   readToken(): Token | undefined;
 }
 
-export const operations = new Set<string>(["+", "-", "*", "/", "(", ")", "^", "**", "!", "sin", "cos", "tan", "fib"]);
-
 export class ExpressionLexer implements Lexer {
   private readonly words: string[];
 
-  constructor(expression: string) {
+  constructor(readonly grammar: Grammar, expression: string) {
     this.words = expression.split(" ");
   }
 
@@ -26,9 +26,7 @@ export class ExpressionLexer implements Lexer {
     if (!word) {
       return undefined;
     }
-    if (operations.has(word)) {
-      return new Token("operation", word);
-    }
-    return new Token("value", word);
+    const type = this.grammar.hasOperation(word) ? "operation" : "value";
+    return new Token(type, word);
   }
 }

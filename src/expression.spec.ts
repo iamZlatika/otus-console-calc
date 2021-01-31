@@ -152,8 +152,8 @@ describe("Negate expression", () => {
   });
 });
 
-describe("Negate expression", () => {
-  it("Should evaluate negation", () => {
+describe("Positive expression", () => {
+  it("Should evaluate positive expression", () => {
     const expression = new PosExpression(new NegExpression(new ValueExpression("42")));
     expect(expression.evaluate()).toBe(-42);
   });

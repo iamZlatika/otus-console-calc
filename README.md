@@ -2,7 +2,6 @@
 
 ## Running calculator
 ```
-npm run build
 npm run calc
 ```
 

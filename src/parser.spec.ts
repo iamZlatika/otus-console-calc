@@ -1,12 +1,14 @@
 import { ExpressionParser } from "./parser";
 import { ExpressionLexer } from "./lexer";
+import { calcGrammar } from "./grammar";
 
-const evaluate = (expression: string) => new ExpressionParser(new ExpressionLexer(expression)).parse().evaluate();
+const evaluate = (expression: string) =>
+  new ExpressionParser(new ExpressionLexer(calcGrammar, expression)).parse().evaluate();
 
 describe("Expression Parser", () => {
   describe("Value expressions", () => {
     it("Should parse empty expression", () => {
-      const parser = new ExpressionParser(new ExpressionLexer(""));
+      const parser = new ExpressionParser(new ExpressionLexer(calcGrammar, ""));
       expect(parser.parse()).toBe(undefined);
     });
 

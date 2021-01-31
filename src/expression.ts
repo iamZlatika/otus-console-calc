@@ -1,9 +1,11 @@
-export interface Expression {
-  evaluate(): number;
+export abstract class Expression {
+  abstract evaluate(): number;
 }
 
-export class ValueExpression implements Expression {
-  constructor(readonly value: string) {}
+export class ValueExpression extends Expression {
+  constructor(readonly value: string) {
+    super();
+  }
   evaluate(): number {
     const result = Number(this.value);
     if (isNaN(result)) {

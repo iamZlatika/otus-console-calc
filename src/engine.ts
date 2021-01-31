@@ -1,3 +1,4 @@
+import { calcGrammar } from "./grammar";
 import { ExpressionLexer } from "./lexer";
 import { ExpressionParser } from "./parser";
 
@@ -12,7 +13,9 @@ export const preprocessExpression = (expression: string): string => {
 
 export const evaluate = (expression: string): [Error | null, number | undefined] => {
   try {
-    const parsedExpression = new ExpressionParser(new ExpressionLexer(preprocessExpression(expression))).parse();
+    const parsedExpression = new ExpressionParser(
+      new ExpressionLexer(calcGrammar, preprocessExpression(expression))
+    ).parse();
     return [null, parsedExpression ? parsedExpression.evaluate() : undefined];
   } catch (e) {
     return [e, undefined];
