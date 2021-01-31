@@ -28,7 +28,7 @@ export class Grammar {
   }
 
   hasOperation(name: string): boolean {
-    return this.operations.has(name) || this.prefixOperations.has(name);
+    return this.operations.has(name);
   }
 
   getOperation(name: string): PostfixOperation | InfixOperation {
@@ -37,6 +37,10 @@ export class Grammar {
       throw new Error("Unknown operation: " + name);
     }
     return operation;
+  }
+
+  hasPrefixOperation(name: string): boolean {
+    return this.prefixOperations.has(name);
   }
 
   getPrefixOperation(name: string): PrefixOperation {

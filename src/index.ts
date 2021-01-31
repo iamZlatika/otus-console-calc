@@ -1,12 +1,12 @@
 import { createInterface } from "readline";
-import { evaluate } from "./engine";
+import { evaluateExpression, evaluateRPNExpression } from "./engine";
 
 const rl = createInterface({
   input: process.stdin,
   output: process.stdout,
 });
 
-const question = (): Promise<void> =>
+const question = (evaluate: (expression: string) => [Error | null, number | undefined]): Promise<void> =>
   new Promise((resolve) => {
     rl.question("> ", (answer: string) => {
       if (answer === "exit") {
@@ -23,13 +23,24 @@ const question = (): Promise<void> =>
   });
 
 async function app() {
-  console.log("┌────────────────────┐");
-  console.log("│ Console Calculator │");
-  console.log("└────────────────────┘");
+  const mode =
+    process.argv
+      .filter((arg) => arg.startsWith("--mode="))
+      .map((arg) => arg.substr("--mode=".length))
+      .pop() ?? "normal";
+  const evaluate = mode === "rpn" ? evaluateRPNExpression : evaluateExpression;
+  printGreeting(mode);
 
   while (true) {
-    await question();
+    await question(evaluate);
   }
 }
+
+const printGreeting = (mode: string) => {
+  const greeting = `  Console Calculator (${mode === "rpn" ? "RPN" : "Normal"} mode)  `;
+  console.log(`┌${"─".repeat(greeting.length)}┐`);
+  console.log(`│${greeting}│`);
+  console.log(`└${"─".repeat(greeting.length)}┘`);
+};
 
 app();

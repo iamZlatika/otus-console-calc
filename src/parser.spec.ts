@@ -1,6 +1,8 @@
-import { ExpressionParser } from "./parser";
+import { ExpressionParser, ToRPNExpressionParser } from "./parser";
 import { ExpressionLexer } from "./lexer";
 import { calcGrammar } from "./grammar";
+import { ValueExpression } from "./expression";
+import { Operation } from "./operation";
 
 const evaluate = (expression: string) =>
   new ExpressionParser(new ExpressionLexer(calcGrammar, expression)).parse().evaluate();
@@ -219,5 +221,40 @@ describe("Expression Parser", () => {
     it.each(testCases)("Should throw error for invalid expression: %s", (expression) => {
       expect(() => evaluate(expression)).toThrow();
     });
+  });
+});
+
+describe("RPN Parser", () => {
+  const val = (value: number) => new ValueExpression(String(value));
+  const op = (operation: string) => calcGrammar.getOperation(operation);
+  const fun = (operation: string) => calcGrammar.getPrefixOperation(operation);
+
+  const expressions: [string, (ValueExpression | Operation)[]][] = [
+    ["42", [val(42)]],
+    ["1 + 2", [val(1), val(2), op("+")]],
+    ["1 + 2 + 3", [val(1), val(2), op("+"), val(3), op("+")]],
+    ["1 + 2 * 3", [val(1), val(2), val(3), op("*"), op("+")]],
+    ["sin 1 * 2 !", [val(1), fun("sin"), val(2), op("!"), op("*")]],
+    [
+      "3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3",
+      [val(3), val(4), val(2), op("*"), val(1), val(5), op("-"), val(2), val(3), op("^"), op("^"), op("/"), op("+")],
+    ],
+    ["sin ( fib ( 2 ) / 3 * 3.14 )", [val(2), fun("fib"), val(3), op("/"), val(3.14), op("*"), fun("sin")]],
+  ];
+
+  it.each(expressions)("Should parse expression %s", (expression, tokens) => {
+    expect(new ToRPNExpressionParser(new ExpressionLexer(calcGrammar, expression)).getTokens()).toEqual(tokens);
+  });
+
+  const resultExpressions: [string, number][] = [
+    ["42", 42],
+    ["1 + 2", 1 + 2],
+    ["1 + 2 + 3", 1 + 2 + 3],
+    ["1 + 2 * 3", 1 + 2 * 3],
+    ["sin 90 * 2 !", 2],
+    ["3 + 4 * 2 / ( 1 - 5 ) ^ 2 ^ 3", 3 + (4 * 2) / (1 - 5) ** (2 ** 3)],
+  ];
+  it.each(resultExpressions)("Should evaluate %s to be equal to %d", (expression, result) => {
+    expect(new ToRPNExpressionParser(new ExpressionLexer(calcGrammar, expression)).parse().evaluate()).toEqual(result);
   });
 });

@@ -1,4 +1,4 @@
-import { evaluate } from "./engine";
+import { evaluateExpression, evaluateRPNExpression } from "./engine";
 
 describe("evaluate", () => {
   const validExpressions: [string, number][] = [
@@ -16,19 +16,25 @@ describe("evaluate", () => {
     ["cos(fib(11)+fib(11)^0)", 0],
   ];
   it.each(validExpressions)("Should evaluate expression %s to be %i", (expression, expectedResult) => {
-    const [error, result] = evaluate(expression);
+      const [error, result] = evaluateExpression(expression);
+      expect(error).toBeNull();
+      expect(result).toBeCloseTo(expectedResult);
+    })
+
+  it.each(validExpressions)("Should evaluate %s as RPN expression to be %i", (expression, expectedResult) => {
+    const [error, result] = evaluateRPNExpression(expression);
     expect(error).toBeNull();
     expect(result).toBeCloseTo(expectedResult);
-  });
+  })
 
   it("Should return error for invalid expression", () => {
-    const [error, result] = evaluate("1 2 3");
+    const [error, result] = evaluateExpression("1 2 3");
     expect(error).not.toBeNull();
     expect(result).toBeUndefined();
   });
 
   it("Should evaluate undefined expression", () => {
-    const [error, result] = evaluate("");
+    const [error, result] = evaluateExpression("");
     expect(error).toBeNull();
     expect(result).toBeUndefined();
   });

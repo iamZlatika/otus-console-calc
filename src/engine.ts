@@ -1,6 +1,6 @@
 import { calcGrammar } from "./grammar";
-import { ExpressionLexer } from "./lexer";
-import { ExpressionParser } from "./parser";
+import { ExpressionLexer, Lexer } from "./lexer";
+import { ExpressionParser, Parser, ToRPNExpressionParser } from "./parser";
 
 export const preprocessExpression = (expression: string): string => {
   const result = expression
@@ -11,13 +11,19 @@ export const preprocessExpression = (expression: string): string => {
   return result;
 };
 
-export const evaluate = (expression: string): [Error | null, number | undefined] => {
+export const evaluate = (expression: string, parser: (lexer: Lexer) => Parser): [Error | null, number | undefined] => {
   try {
-    const parsedExpression = new ExpressionParser(
-      new ExpressionLexer(calcGrammar, preprocessExpression(expression))
-    ).parse();
+    const parsedExpression = parser(new ExpressionLexer(calcGrammar, preprocessExpression(expression))).parse();
     return [null, parsedExpression ? parsedExpression.evaluate() : undefined];
   } catch (e) {
     return [e, undefined];
   }
+};
+
+export const evaluateExpression = (expression: string): [Error | null, number | undefined] => {
+  return evaluate(expression, (lexer: Lexer) => new ExpressionParser(lexer));
+};
+
+export const evaluateRPNExpression = (expression: string): [Error | null, number | undefined] => {
+  return evaluate(expression, (lexer: Lexer) => new ToRPNExpressionParser(lexer));
 };

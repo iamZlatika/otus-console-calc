@@ -5,6 +5,11 @@
 npm run calc
 ```
 
+## Running calculator in RPN mode
+```
+npm run rpn-calc
+```
+
 ## Usage
 ```
 > 1 + 2

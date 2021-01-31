@@ -1,6 +1,6 @@
-import { Expression, ValueExpression } from "./expression";
+import { Expression, RPNExpression, ValueExpression } from "./expression";
 import { Lexer } from "./lexer";
-import { InfixOperation, PostfixOperation } from "./operation";
+import { InfixOperation, Operation, PostfixOperation, PrefixOperation } from "./operation";
 import { Token } from "./token";
 
 export interface Parser {
@@ -71,5 +71,70 @@ export class ExpressionParser implements Parser {
       throw new Error("Invalid expression");
     }
     return this.lexer.grammar.getOperation(token.text);
+  }
+}
+
+export class ToRPNExpressionParser implements Parser {
+  constructor(readonly lexer: Lexer) {}
+
+  parse(): Expression | undefined {
+    return new RPNExpression(this.getTokens());
+  }
+
+  getTokens(): (ValueExpression | Operation)[] {
+    let token: Token | undefined;
+    const operations: Operation[] = [];
+    const result: (ValueExpression | Operation)[] = [];
+    while ((token = this.lexer.extractToken())) {
+      if (!token) {
+        throw new Error("Error");
+      }
+
+      if (token.type === "value") {
+        result.push(new ValueExpression(token.text));
+        continue;
+      }
+
+      const operation = this.extractOperation(token.text);
+
+      if (operation.name === "(") {
+        operations.push(operation);
+      } else if (operation.name === ")") {
+        while (operations.length > 0 && operations[operations.length - 1].name !== "(") {
+          result.push(operations.pop()!);
+        }
+        if (operations.pop()?.name !== "(") {
+          throw new Error("Unmatched parentheses");
+        }
+      } else if (operations instanceof PrefixOperation) {
+        operations.push(operation);
+      } else {
+        while (
+          operations.length > 0 &&
+          operations[operations.length - 1].name !== "(" &&
+          (operations[operations.length - 1].priority > operation.priority ||
+            (operations[operations.length - 1].priority == operation.priority &&
+              operation instanceof InfixOperation &&
+              operation.associativity === "left"))
+        ) {
+          result.push(operations.pop()!);
+        }
+        operations.push(operation);
+      }
+    }
+    while (operations.length > 0) {
+      result.push(operations.pop()!);
+    }
+    return result;
+  }
+
+  private extractOperation(name: string): Operation {
+    if (this.lexer.grammar.hasOperation(name)) {
+      return this.lexer.grammar.getOperation(name);
+    }
+    if (this.lexer.grammar.hasPrefixOperation(name)) {
+      return this.lexer.grammar.getPrefixOperation(name);
+    }
+    throw new Error("Unknown operation: " + name);
   }
 }

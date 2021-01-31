@@ -7,9 +7,14 @@ describe("Grammar", () => {
   const postfix = new PostfixOperation("~", 100, (expression: Expression) => expression);
   const infix = new InfixOperation("~", 100, (left: Expression, right: Expression) => new SumExpression(left, right));
 
-  it.each([prefix, postfix, infix])("Should find operation", (operation) => {
+  it.each([postfix, infix])("Should find operation", (operation) => {
     const grammar = new Grammar([operation]);
     expect(grammar.hasOperation(operation.name)).toBe(true);
+  });
+
+  it.each([prefix])("Should find prefix operation", (operation) => {
+    const grammar = new Grammar([operation]);
+    expect(grammar.hasPrefixOperation(operation.name)).toBe(true);
   });
 
   it.each([postfix, infix])("Should return operation", (operation) => {
@@ -30,10 +35,10 @@ describe("Grammar", () => {
 });
 
 describe("Calc Grammar", () => {
-  it.each(["+", "-", "*", "/", "(", ")", "^", "**", "!", "sin", "cos", "tan", "fib"])(
-    "Should have operation '%s'",
-    (operation) => {
-      expect(calcGrammar.hasOperation(operation)).toBe(true);
-    }
-  );
+  it.each(["+", "-", "*", "/", "^", "**", "!", ")"])("Should have operation '%s'", (operation) => {
+    expect(calcGrammar.hasOperation(operation)).toBe(true);
+  });
+  it.each(["-", "sin", "cos", "tan", "fib", "("])("Should have prefix operations", (operation) => {
+    expect(calcGrammar.hasPrefixOperation(operation)).toBe(true);
+  });
 });

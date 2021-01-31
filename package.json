@@ -7,6 +7,7 @@
     "test": "jest --coverage",
     "lint": "npx eslint --ext .js,.ts --fix ./",
     "calc": "npx ts-node ./src",
+    "rpn-calc": "npx ts-node ./src --mode=rpn",
     "clean": "rm -rf coverage dist"
   },
   "repository": {

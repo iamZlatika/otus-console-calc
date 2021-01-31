@@ -26,7 +26,7 @@ export class ExpressionLexer implements Lexer {
     if (!word) {
       return undefined;
     }
-    const type = this.grammar.hasOperation(word) ? "operation" : "value";
+    const type = this.grammar.hasOperation(word) || this.grammar.hasPrefixOperation(word) ? "operation" : "value";
     return new Token(type, word);
   }
 }
