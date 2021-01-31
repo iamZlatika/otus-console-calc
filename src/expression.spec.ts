@@ -13,7 +13,10 @@ import {
   FibExpression,
   NegExpression,
   PosExpression,
+  RPNExpression,
 } from "./expression";
+import { calcGrammar } from "./grammar";
+import { Operation } from "./operation";
 
 describe("Value Expression", () => {
   it("Should return value", () => {
@@ -21,6 +24,9 @@ describe("Value Expression", () => {
   });
   it("Should return another value", () => {
     expect(new ValueExpression("56").evaluate()).toBe(56);
+  });
+  it("Should return value for number argument", () => {
+    expect(new ValueExpression(42).evaluate()).toBe(42);
   });
 
   it("Should throw Error if argument is not a number", () => {
@@ -156,5 +162,26 @@ describe("Positive expression", () => {
   it("Should evaluate positive expression", () => {
     const expression = new PosExpression(new NegExpression(new ValueExpression("42")));
     expect(expression.evaluate()).toBe(-42);
+  });
+});
+
+describe("Reverse Polish Notation Expression", () => {
+  const val = (value: number) => new ValueExpression(value);
+  const op = (operation: string) => calcGrammar.getOperation(operation);
+  const prefix = (operation: string) => calcGrammar.getPrefixOperation(operation);
+
+  const expressions: [(ValueExpression | Operation)[], number][] = [
+    [[val(42)], 42],
+    [[val(2), val(1), op("+")], 3],
+    [[val(3), val(4), val(2), val(1), op("-"), op("*"), op("+")], 3 + 4 * (2 - 1)],
+    [[val(10), prefix("fib")], 55],
+  ];
+
+  it.each(expressions)("Should evaluate RPN expression", (tokens, result) => {
+    expect(new RPNExpression(tokens).evaluate()).toBe(result);
+  });
+
+  it("Should throw error given invalid operation", () => {
+    expect(() => new RPNExpression([op("+")]).evaluate()).toThrow();
   });
 });

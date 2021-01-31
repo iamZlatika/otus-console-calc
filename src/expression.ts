@@ -1,12 +1,17 @@
+import { InfixOperation, Operation } from "./operation";
+
 export abstract class Expression {
   abstract evaluate(): number;
 }
 
 export class ValueExpression extends Expression {
-  constructor(readonly value: string) {
+  constructor(readonly value: string | number) {
     super();
   }
   evaluate(): number {
+    if (typeof this.value === "number") {
+      return this.value;
+    }
     const result = Number(this.value);
     if (isNaN(result)) {
       throw new Error(`Invalid number: ${this.value}`);
@@ -131,5 +136,33 @@ export class PosExpression implements Expression {
   constructor(readonly rigth: Expression) {}
   evaluate(): number {
     return this.rigth.evaluate();
+  }
+}
+
+export class RPNExpression implements Expression {
+  constructor(readonly tokens: (ValueExpression | Operation)[]) {}
+  evaluate(): number {
+    const acc: ValueExpression[] = [];
+    const tokens = [...this.tokens];
+    const popValue = () => {
+      const value = acc.pop();
+      if (!value) {
+        throw new Error("Invalid expression");
+      }
+      return value;
+    };
+    let token: ValueExpression | Operation | undefined;
+    while ((token = tokens.shift())) {
+      if (token instanceof ValueExpression) {
+        acc.push(token);
+      } else if (token instanceof InfixOperation) {
+        const right = popValue();
+        const left = popValue();
+        acc.push(new ValueExpression(token.process(left, right).evaluate()));
+      } else {
+        acc.push(new ValueExpression(token.process(popValue()).evaluate()));
+      }
+    }
+    return popValue().evaluate();
   }
 }
